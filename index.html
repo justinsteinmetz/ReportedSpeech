@@ -27,7 +27,6 @@
     --display:     'Playfair Display', serif;
   }
 
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
 
@@ -1060,26 +1059,23 @@ Respond ONLY with valid JSON, no markdown:
 }
 
 // ══════════════════════════════════════════════
-// NAVIGATION
+// NAVIGATION  ← fixed here
 // ══════════════════════════════════════════════
-let maxVisited = 0; // track furthest screen reached
+let maxVisited = 0;
 
 function go(n) {
   const prev = document.getElementById('s' + current);
   prev.classList.remove('active');
-  // Force animation re-trigger by briefly removing and re-adding active
-  prev.style.animation = 'none';
+  prev.style.animation = '';        // clear inline override on the screen we're leaving
 
   current = n;
   if (n > maxVisited) maxVisited = n;
 
   const next = document.getElementById('s' + current);
-  // Reset animation so it fires fresh every time
-  next.style.animation = 'none';
-  next.classList.add('active');
-  // Trigger reflow, then restore animation
-  void next.offsetWidth;
-  next.style.animation = '';
+  next.style.animation = 'none';   // pause animation
+  void next.offsetWidth;            // force reflow so the pause takes effect
+  next.style.animation = '';        // release — CSS keyframe fires fresh
+  next.classList.add('active');     // show screen (after reflow, so animation triggers)
 
   updatePips();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1116,8 +1112,8 @@ function buildResults() {
     'Nearly perfect. One or two fine points to revisit.',
     'Excellent. Strong command of reported speech.',
     'Very strong. Just a small detail to watch.',
-    'Outstanding. You've mastered reported speech.',
-    'Outstanding. You've mastered reported speech.',
+    'Outstanding. You\'ve mastered reported speech.',
+    'Outstanding. You\'ve mastered reported speech.',
     'Clean sweep. Reported speech is yours.'
   ];
   document.getElementById('finalMsg').textContent = msgs[Math.min(total, msgs.length - 1)];
