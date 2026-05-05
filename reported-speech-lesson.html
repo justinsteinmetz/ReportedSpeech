@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reported Speech · 20-Minute Lesson</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --gold: #c9993a;
+    --gold-light: #e8c86a;
+    --rust: #b85c38;
+    --teal: #2d7d6e;
+    --teal-light: #e0f0ec;
+    --red: #c0392b;
+    --progress-h: 6px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar-wrap {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--progress-h);
+    background: var(--cream);
+    z-index: 100;
+  }
+  #progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--gold));
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 60px 40px 40px;
+    max-width: 820px;
+    margin: 0 auto;
+    border-bottom: 2px solid var(--ink);
+  }
+  .lesson-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .subtitle {
+    font-weight: 300;
+    color: #555;
+    font-size: 1.05rem;
+  }
+  .timer-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 2px;
+    margin-top: 18px;
+  }
+
+  /* ── NAV DOTS ── */
+  #step-nav {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 22px 0 10px;
+    position: sticky;
+    top: var(--progress-h);
+    background: var(--paper);
+    z-index: 90;
+    border-bottom: 1px solid #ddd;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #ccc;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    border: none;
+  }
+  .dot.active { background: var(--teal); transform: scale(1.35); }
+  .dot.done { background: var(--gold); }
+
+  /* ── SECTIONS ── */
+  main { max-width: 820px; margin: 0 auto; padding: 0 24px 80px; }
+
+  .section {
+    display: none;
+    animation: fadeIn 0.5s ease;
+    padding: 48px 0 24px;
+  }
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    margin-bottom: 20px;
+    color: var(--ink);
+  }
+  .section p { margin-bottom: 14px; color: #333; }
+
+  /* ── CALLOUT BOX ── */
+  .callout {
+    border-left: 4px solid var(--teal);
+    background: var(--teal-light);
+    padding: 18px 22px;
+    margin: 24px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .callout.gold {
+    border-color: var(--gold);
+    background: #fdf6e3;
+  }
+  .callout.rust {
+    border-color: var(--rust);
+    background: #fdf0ec;
+  }
+  .callout strong { color: var(--teal); }
+  .callout.gold strong { color: #7a5c0d; }
+  .callout.rust strong { color: var(--rust); }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 0.93rem;
+  }
+  .compare-table th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 18px;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .compare-table td {
+    padding: 12px 18px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: top;
+  }
+  .compare-table tr:nth-child(even) td { background: var(--cream); }
+  .compare-table .arrow { color: var(--teal); font-weight: 600; margin: 0 6px; }
+
+  /* ── BACKSHIFT GRID ── */
+  .backshift-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .shift-card {
+    background: #fff;
+    border: 1.5px solid var(--cream);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 0.9rem;
+  }
+  .shift-card .from { color: var(--rust); font-family: 'DM Mono', monospace; font-size: 0.82rem; }
+  .shift-card .to   { color: var(--teal); font-family: 'DM Mono', monospace; font-size: 0.82rem; }
+  .shift-card .arr  { color: #999; margin: 4px 0; }
+
+  /* ── QUIZ ── */
+  .quiz-question {
+    background: #fff;
+    border: 2px solid var(--cream);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .quiz-question .q-text {
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+  }
+  .quiz-question .q-text em { color: var(--teal); font-style: normal; font-weight: 500; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    text-align: left;
+    background: var(--paper);
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+  }
+  .option-btn:hover { border-color: var(--teal); background: var(--teal-light); }
+  .option-btn.correct { background: #d4f4e8; border-color: var(--teal); color: #0d5c45; }
+  .option-btn.wrong   { background: #fde8e8; border-color: var(--red);  color: var(--red); }
+  .option-btn:disabled { cursor: default; }
+  .feedback {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    padding: 10px 14px;
+    border-radius: 6px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d4f4e8; color: #0d5c45; }
+  .feedback.err { background: #fde8e8; color: var(--red); }
+
+  /* ── TRANSFORM EXERCISE ── */
+  .transform-ex {
+    background: #fff;
+    border: 2px solid var(--cream);
+    border-radius: 10px;
+    padding: 22px;
+    margin-bottom: 20px;
+  }
+  .direct-quote {
+    font-style: italic;
+    color: #444;
+    margin-bottom: 12px;
+    padding: 10px 16px;
+    background: var(--cream);
+    border-radius: 4px;
+    font-family: 'Playfair Display', serif;
+  }
+  .transform-input {
+    width: 100%;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    background: var(--paper);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .transform-input:focus { border-color: var(--teal); }
+  .check-btn {
+    margin-top: 10px;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+  }
+  .check-btn:hover { background: #236358; }
+
+  /* ── SCORE ── */
+  .score-display {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .score-circle {
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    border: 5px solid var(--teal);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  .score-num { font-size: 2.5rem; font-weight: 700; color: var(--teal); line-height: 1; }
+  .score-label { font-size: 0.8rem; color: #888; }
+  .score-msg { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
+
+  /* ── VERB TAGS ── */
+  .verb-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .v-tag {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+  }
+  .v-tag.teal { background: var(--teal); }
+
+  /* ── NAV BUTTONS ── */
+  .btn-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid #ddd;
+  }
+  .nav-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 11px 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+  }
+  .nav-btn.primary { background: var(--ink); color: var(--paper); }
+  .nav-btn:hover   { opacity: 0.78; }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .step-info { font-family: 'DM Mono', monospace; font-size: 12px; color: #888; }
+
+  /* ── HIGHLIGHT SPANS ── */
+  .hl-teal  { color: var(--teal); font-weight: 600; }
+  .hl-rust  { color: var(--rust); font-weight: 600; }
+  .hl-gold  { color: var(--gold); font-weight: 600; }
+
+  @media (max-width: 600px) {
+    header { padding: 50px 20px 30px; }
+    .backshift-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+
+<header>
+  <p class="lesson-tag">Grammar · Intermediate</p>
+  <h1>Changing Direct Speech<br><em>to Reported Speech</em></h1>
+  <p class="subtitle">A guided 20-minute lesson with examples, explanations, and practice exercises.</p>
+  <div class="timer-badge">⏱ ~20 min &nbsp;·&nbsp; 6 sections</div>
+</header>
+
+<div id="step-nav"></div>
+
+<main>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1 – WHAT IS IT?
+══════════════════════════════════════════ -->
+<section class="section" id="s1">
+  <p class="section-label">Section 1 of 6</p>
+  <h2>What Is Reported Speech?</h2>
+  <p>Sometimes we want to tell someone what another person said. We have two ways to do this:</p>
+
+  <div class="callout">
+    <p><strong>Direct speech</strong> — quote the exact words, using quotation marks:<br>
+    <em>"I work in a bank," said Daniel.</em></p>
+  </div>
+  <div class="callout gold">
+    <p><strong>Reported (indirect) speech</strong> — describe what was said, without quotes:<br>
+    <em>Daniel said that he <span class="hl-teal">worked</span> in a bank.</em></p>
+  </div>
+
+  <p>Notice two things changed in reported speech:</p>
+  <ol style="margin: 12px 0 12px 22px; line-height: 2;">
+    <li>The <strong>quotation marks</strong> disappeared.</li>
+    <li>The verb <em>work</em> shifted back a tense to <em><span class="hl-teal">worked</span></em>. This is called <strong>backshift</strong>.</li>
+  </ol>
+
+  <table class="compare-table">
+    <thead><tr><th>Direct</th><th>Reported (Indirect)</th></tr></thead>
+    <tbody>
+      <tr><td>Do <strong>not</strong> transform the sentence</td><td>Transform the sentence</td></tr>
+      <tr><td>Quote the speaker's exact words</td><td>Do <strong>not</strong> quote exact words</td></tr>
+      <tr><td>No change of tense</td><td>Shift one tense back <em>(backshift)</em></td></tr>
+      <tr><td>Words go in quotes <code>""</code></td><td>Use a <strong>reporting verb</strong> + <em>that / if</em></td></tr>
+    </tbody>
+  </table>
+
+  <div class="btn-row">
+    <button class="nav-btn" disabled>← Back</button>
+    <span class="step-info" id="step-label-1">1 / 6</span>
+    <button class="nav-btn primary" onclick="goTo(2)">Continue →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 2 – REPORTING VERBS
+══════════════════════════════════════════ -->
+<section class="section" id="s2">
+  <p class="section-label">Section 2 of 6</p>
+  <h2>Reporting Verbs &amp; How to Use Them</h2>
+  <p>Instead of always using <em>say</em>, English has many <strong>reporting verbs</strong> that add meaning:</p>
+
+  <div class="verb-list">
+    <span class="v-tag">say</span><span class="v-tag">tell</span><span class="v-tag">ask</span>
+    <span class="v-tag">believe</span><span class="v-tag">reply</span><span class="v-tag">respond</span>
+    <span class="v-tag">advise</span><span class="v-tag">agree</span><span class="v-tag">challenge</span>
+    <span class="v-tag">claim</span><span class="v-tag">decide</span><span class="v-tag">demand</span>
+    <span class="v-tag">invite</span><span class="v-tag">offer</span><span class="v-tag">persuade</span>
+    <span class="v-tag">promise</span><span class="v-tag">refuse</span><span class="v-tag">remind</span>
+  </div>
+
+  <div class="callout">
+    <p><strong>For statements</strong> → use the reporting verb + <strong>that</strong><br>
+    <em>She <span class="hl-teal">said that</span> she was tired.</em></p>
+  </div>
+  <div class="callout gold">
+    <p><strong>For questions</strong> → use the reporting verb + <strong>if / whether</strong><br>
+    <em>He <span class="hl-gold">asked if</span> I was coming.</em></p>
+  </div>
+  <div class="callout rust">
+    <p><strong>For commands / requests / advice</strong> → use <strong>to‑infinitive</strong><br>
+    <em>She <span class="hl-rust">told me to open</span> the window.</em><br>
+    <em>The doctor <span class="hl-rust">advised me to eat</span> more fruit.</em></p>
+  </div>
+
+  <p style="margin-top:16px;"><strong>Special case — "suggest":</strong> it cannot use a to‑infinitive. Use <strong>suggest + …ing</strong> or <strong>suggest that…</strong></p>
+  <div class="callout">
+    <p><em>Miss Bell suggested <span class="hl-teal">talking</span> to our parents first.</em><br>
+    <em>Miss Bell suggested <span class="hl-teal">that we talk</span> to our parents first.</em></p>
+  </div>
+
+  <p><strong>Command verbs</strong> (tell, order, instruct, direct, warn) are always followed by a to‑infinitive.</p>
+
+  <div class="btn-row">
+    <button class="nav-btn" onclick="goTo(1)">← Back</button>
+    <span class="step-info">2 / 6</span>
+    <button class="nav-btn primary" onclick="goTo(3)">Continue →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3 – BACKSHIFT
+══════════════════════════════════════════ -->
+<section class="section" id="s3">
+  <p class="section-label">Section 3 of 6</p>
+  <h2>Backshift: Shifting Tenses Back</h2>
+  <p>When the reporting verb is in the past (<em>said, told</em>, etc.), the tense of the original verb <strong>shifts back</strong> one step.</p>
+
+  <div class="backshift-grid">
+    <div class="shift-card">
+      <div class="from">present simple</div>
+      <div class="arr">↓</div>
+      <div class="to">past simple</div>
+    </div>
+    <div class="shift-card">
+      <div class="from">past simple</div>
+      <div class="arr">↓</div>
+      <div class="to">past perfect</div>
+    </div>
+    <div class="shift-card">
+      <div class="from">present perfect</div>
+      <div class="arr">↓</div>
+      <div class="to">past perfect</div>
+    </div>
+    <div class="shift-card">
+      <div class="from">will + infinitive</div>
+      <div class="arr">↓</div>
+      <div class="to">would + infinitive</div>
+    </div>
+    <div class="shift-card">
+      <div class="from">can</div>
+      <div class="arr">↓</div>
+      <div class="to">could</div>
+    </div>
+    <div class="shift-card">
+      <div class="from">is / am / are going to</div>
+      <div class="arr">↓</div>
+      <div class="to">was / were going to</div>
+    </div>
+  </div>
+
+  <table class="compare-table" style="margin-top:8px;">
+    <thead><tr><th>Direct Speech</th><th>Indirect Speech</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>"Your times <strong>are</strong> really good."</td>
+        <td>Coach told me my times <span class="hl-teal"><strong>were</strong></span> really good.</td>
+      </tr>
+      <tr>
+        <td>"Drew <strong>asked</strong> me for a date."</td>
+        <td>Kaya said Drew <span class="hl-teal"><strong>had asked</strong></span> her for a date.</td>
+      </tr>
+      <tr>
+        <td>"I <strong>have practised</strong> a lot."</td>
+        <td>Drew told me that he <span class="hl-teal"><strong>had practised</strong></span> a lot.</td>
+      </tr>
+      <tr>
+        <td>"I'm sure you <strong>will</strong> qualify."</td>
+        <td>Drew said he was sure Kaya <span class="hl-teal"><strong>would</strong></span> qualify.</td>
+      </tr>
+      <tr>
+        <td>"You <strong>can</strong> use the truck."</td>
+        <td>His dad said Drew <span class="hl-teal"><strong>could</strong></span> use the truck.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout rust" style="margin-top:20px;">
+    <p><strong>Indirect questions</strong> — word order changes to <em>S – V – …</em> and <em>do/does/did</em> is dropped.<br>
+    <em>"Where do they live?" → She asked where <span class="hl-rust">they lived.</span></em></p>
+  </div>
+
+  <div class="btn-row">
+    <button class="nav-btn" onclick="goTo(2)">← Back</button>
+    <span class="step-info">3 / 6</span>
+    <button class="nav-btn primary" onclick="goTo(4)">Continue →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 4 – QUICK QUIZ
+══════════════════════════════════════════ -->
+<section class="section" id="s4">
+  <p class="section-label">Section 4 of 6 — Quiz</p>
+  <h2>Quick Check: Multiple Choice</h2>
+  <p>Choose the best reported speech version for each sentence. Your score is recorded at the end!</p>
+
+  <div id="quiz-container"></div>
+
+  <div class="btn-row">
+    <button class="nav-btn" onclick="goTo(3)">← Back</button>
+    <span class="step-info">4 / 6</span>
+    <button class="nav-btn primary" onclick="goTo(5)">Continue →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 5 – TRANSFORM PRACTICE
+══════════════════════════════════════════ -->
+<section class="section" id="s5">
+  <p class="section-label">Section 5 of 6 — Writing Practice</p>
+  <h2>Transform the Sentences</h2>
+  <p>Rewrite each direct speech sentence as reported speech. Type your answer and press <em>Check</em>.</p>
+
+  <div id="transform-container"></div>
+
+  <div class="btn-row">
+    <button class="nav-btn" onclick="goTo(4)">← Back</button>
+    <span class="step-info">5 / 6</span>
+    <button class="nav-btn primary" onclick="goTo(6)">See My Results →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 6 – RESULTS
+══════════════════════════════════════════ -->
+<section class="section" id="s6">
+  <p class="section-label">Section 6 of 6 — Results</p>
+  <h2>Lesson Complete! 🎉</h2>
+
+  <div class="score-display">
+    <div class="score-circle">
+      <div class="score-num" id="final-score">–</div>
+      <div class="score-label">/ 5 correct</div>
+    </div>
+    <p class="score-msg" id="score-msg">Well done!</p>
+    <p id="score-detail" style="color:#555; max-width:420px; margin:0 auto;"></p>
+  </div>
+
+  <h3 style="font-family:'Playfair Display',serif; margin: 32px 0 16px;">Key Rules to Remember</h3>
+  <div class="callout"><p><strong>1.</strong> Backshift tenses one step back when the reporting verb is in the past.</p></div>
+  <div class="callout gold"><p><strong>2.</strong> Use <em>that</em> for statements, <em>if/whether</em> for questions, and <em>to-infinitive</em> for commands.</p></div>
+  <div class="callout rust"><p><strong>3.</strong> <em>Suggest</em> is special — never use it with a to-infinitive. Use <em>suggest + …ing</em> or <em>suggest that</em>.</p></div>
+  <div class="callout"><p><strong>4.</strong> In indirect questions, use normal word order (S–V) and drop do/does/did.</p></div>
+
+  <div class="btn-row" style="justify-content:center;">
+    <button class="nav-btn primary" onclick="restartLesson()">↺ Restart Lesson</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ─── DATA ─────────────────────────────── */
+const quizData = [
+  {
+    q: '"I <em>am</em> very happy," she said.',
+    options: [
+      'She said that she is very happy.',
+      'She said that she was very happy.',
+      'She said that she be very happy.',
+      'She told that she was very happy.'
+    ],
+    correct: 1,
+    explanation: 'Present simple "am" → past simple "was" (backshift). "Said that" is correct; "told" requires an object person.'
+  },
+  {
+    q: '"Do you <em>like</em> coffee?" he asked.',
+    options: [
+      'He asked if I liked coffee.',
+      'He asked do I like coffee.',
+      'He asked that I liked coffee.',
+      'He said if I liked coffee.'
+    ],
+    correct: 0,
+    explanation: '"if" introduces indirect yes/no questions. Normal word order: "I liked" (not "do I like"). "Said" doesn\'t introduce questions — "asked" does.'
+  },
+  {
+    q: '"Open the window!" the teacher said.',
+    options: [
+      'The teacher said to open the window.',
+      'The teacher told me to open the window.',
+      'The teacher suggested to open the window.',
+      'The teacher asked that open the window.'
+    ],
+    correct: 1,
+    explanation: 'Commands use tell/ask + object + to-infinitive. "Told me to open" is the correct structure.'
+  },
+  {
+    q: '"I <em>have finished</em> my homework," Tom said.',
+    options: [
+      'Tom said he finished his homework.',
+      'Tom said he has finished his homework.',
+      'Tom said he had finished his homework.',
+      'Tom said he will finish his homework.'
+    ],
+    correct: 2,
+    explanation: 'Present perfect "have finished" → past perfect "had finished" (backshift).'
+  },
+  {
+    q: '"We <em>will</em> help you," they said.',
+    options: [
+      'They said they will help me.',
+      'They said they would help me.',
+      'They said they could help me.',
+      'They said they shall help me.'
+    ],
+    correct: 1,
+    explanation: '"will" → "would" in reported speech (backshift of future).'
+  }
+];
+
+const transformData = [
+  {
+    direct: '"She works in a hospital," Marco said.',
+    hint: 'Marco said that she ___.',
+    accepted: ['marco said that she worked in a hospital', 'marco said she worked in a hospital'],
+    model: 'Marco said that she worked in a hospital.'
+  },
+  {
+    direct: '"Can you help me?" Anna asked.',
+    hint: 'Anna asked if I ___.',
+    accepted: ['anna asked if i could help her', 'anna asked whether i could help her'],
+    model: 'Anna asked if I could help her.'
+  },
+  {
+    direct: '"Don\'t be late!" the coach warned.',
+    hint: 'The coach warned us ___.',
+    accepted: ['the coach warned us not to be late', 'the coach warned me not to be late'],
+    model: 'The coach warned us not to be late.'
+  },
+  {
+    direct: '"I have never been to Paris," she said.',
+    hint: 'She said she ___.',
+    accepted: ['she said she had never been to paris', 'she said that she had never been to paris'],
+    model: 'She said that she had never been to Paris.'
+  }
+];
+
+/* ─── STATE ─────────────────────────────── */
+let currentSection = 1;
+const totalSections = 6;
+let quizScore = 0;
+let quizAnswered = new Array(quizData.length).fill(false);
+
+/* ─── INIT ──────────────────────────────── */
+function init() {
+  buildNavDots();
+  buildQuiz();
+  buildTransform();
+  goTo(1);
+}
+
+function buildNavDots() {
+  const nav = document.getElementById('step-nav');
+  for (let i = 1; i <= totalSections; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'dot';
+    btn.dataset.section = i;
+    btn.title = 'Go to section ' + i;
+    btn.onclick = () => goTo(i);
+    nav.appendChild(btn);
+  }
+}
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  quizData.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question';
+    div.innerHTML = `
+      <p class="q-text">${idx + 1}. ${item.q}</p>
+      <div class="options" id="opts-${idx}">
+        ${item.options.map((opt, oi) =>
+          `<button class="option-btn" onclick="selectOption(${idx},${oi})">${opt}</button>`
+        ).join('')}
+      </div>
+      <div class="feedback" id="fb-${idx}"></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function buildTransform() {
+  const container = document.getElementById('transform-container');
+  transformData.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'transform-ex';
+    div.innerHTML = `
+      <p class="direct-quote">${item.direct}</p>
+      <p style="font-size:0.85rem; color:#888; margin-bottom:8px;">Hint: <em>${item.hint}</em></p>
+      <input class="transform-input" id="tf-${idx}" type="text" placeholder="Type your reported speech here…" />
+      <br>
+      <button class="check-btn" onclick="checkTransform(${idx})">Check ✓</button>
+      <div class="feedback" id="tfb-${idx}"></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+/* ─── NAVIGATION ─────────────────────────── */
+function goTo(n) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('s' + n).classList.add('active');
+  currentSection = n;
+  updateDots();
+  updateProgressBar();
+  if (n === 6) updateScore();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateDots() {
+  document.querySelectorAll('.dot').forEach(dot => {
+    const sec = parseInt(dot.dataset.section);
+    dot.className = 'dot';
+    if (sec === currentSection) dot.classList.add('active');
+    else if (sec < currentSection) dot.classList.add('done');
+  });
+}
+
+function updateProgressBar() {
+  const pct = ((currentSection - 1) / (totalSections - 1)) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+/* ─── QUIZ LOGIC ──────────────────────────── */
+function selectOption(qIdx, optIdx) {
+  if (quizAnswered[qIdx]) return;
+  quizAnswered[qIdx] = true;
+
+  const opts = document.querySelectorAll(`#opts-${qIdx} .option-btn`);
+  opts.forEach(btn => btn.disabled = true);
+
+  const isCorrect = optIdx === quizData[qIdx].correct;
+  opts[optIdx].classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) opts[quizData[qIdx].correct].classList.add('correct');
+
+  if (isCorrect) quizScore++;
+
+  const fb = document.getElementById('fb-' + qIdx);
+  fb.className = 'feedback show ' + (isCorrect ? 'ok' : 'err');
+  fb.textContent = (isCorrect ? '✓ Correct! ' : '✗ Not quite. ') + quizData[qIdx].explanation;
+}
+
+/* ─── TRANSFORM LOGIC ─────────────────────── */
+function checkTransform(idx) {
+  const input = document.getElementById('tf-' + idx);
+  const val = input.value.trim().toLowerCase().replace(/[.,!?]+$/, '').replace(/\s+/g,' ');
+  const fb = document.getElementById('tfb-' + idx);
+  const accepted = transformData[idx].accepted;
+
+  const ok = accepted.some(a => val === a || val === a.replace(/[.,!?]+$/,''));
+
+  fb.className = 'feedback show ' + (ok ? 'ok' : 'err');
+  if (ok) {
+    fb.textContent = '✓ Great job!';
+    input.disabled = true;
+    document.querySelector(`#tfb-${idx}`).previousElementSibling.disabled = true;
+  } else {
+    fb.innerHTML = `✗ Not quite. A possible answer: <strong>${transformData[idx].model}</strong>`;
+  }
+}
+
+/* ─── SCORE ──────────────────────────────── */
+function updateScore() {
+  document.getElementById('final-score').textContent = quizScore;
+  let msg = '', detail = '';
+  if (quizScore === 5) {
+    msg = 'Perfect score! Outstanding! 🌟';
+    detail = 'You have a strong command of reported speech. Keep practising with real texts!';
+  } else if (quizScore >= 3) {
+    msg = 'Well done! You\'re getting it.';
+    detail = 'Review any questions you missed, especially the backshift rules.';
+  } else {
+    msg = 'Keep practising — you\'ll get there!';
+    detail = 'Go back through the Backshift section and try the quiz again. It takes time!';
+  }
+  document.getElementById('score-msg').textContent = msg;
+  document.getElementById('score-detail').textContent = detail;
+}
+
+/* ─── RESTART ─────────────────────────────── */
+function restartLesson() {
+  quizScore = 0;
+  quizAnswered = new Array(quizData.length).fill(false);
+  document.getElementById('quiz-container').innerHTML = '';
+  document.getElementById('transform-container').innerHTML = '';
+  buildQuiz();
+  buildTransform();
+  goTo(1);
+}
+
+init();
+</script>
+</body>
+</html>
