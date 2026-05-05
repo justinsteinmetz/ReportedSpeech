@@ -4,841 +4,1157 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reported Speech · 20-Minute Lesson</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #1a1a2e;
-    --paper: #f5f0e8;
-    --cream: #ede8dc;
-    --gold: #c9993a;
-    --gold-light: #e8c86a;
-    --rust: #b85c38;
-    --teal: #2d7d6e;
-    --teal-light: #e0f0ec;
-    --red: #c0392b;
-    --progress-h: 6px;
+    --ink:         #1a1610;
+    --paper:       #f5f0e8;
+    --cream:       #ede7d9;
+    --amber:       #c8821a;
+    --amber-light: #e8a830;
+    --amber-dim:   rgba(200,130,26,0.14);
+    --muted:       #6b6055;
+    --card:        rgba(245,240,232,0.05);
+    --border:      rgba(245,240,232,0.1);
+    --border-amber:rgba(200,130,26,0.25);
+    --correct:     #2d6a4f;
+    --correct-bg:  rgba(45,106,79,0.12);
+    --wrong:       #8b2a2a;
+    --wrong-bg:    rgba(139,42,42,0.12);
+    --mono:        'DM Mono', monospace;
+    --serif:       'Lora', Georgia, serif;
+    --display:     'Playfair Display', serif;
   }
+
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--paper);
-    color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.72;
     min-height: 100vh;
-    font-size: 16px;
-    line-height: 1.6;
+    overflow-x: hidden;
   }
 
-  /* ── PROGRESS BAR ── */
-  #progress-bar-wrap {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: var(--progress-h);
-    background: var(--cream);
-    z-index: 100;
-  }
-  #progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, var(--teal), var(--gold));
-    width: 0%;
-    transition: width 0.4s ease;
+  /* grain */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: .5;
   }
 
   /* ── HEADER ── */
-  header {
-    padding: 60px 40px 40px;
-    max-width: 820px;
-    margin: 0 auto;
-    border-bottom: 2px solid var(--ink);
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 28px;
+    background: rgba(26,22,16,0.93);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border-amber);
   }
-  .lesson-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 12px;
+  .header-label {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber);
   }
-  h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    line-height: 1.15;
-    color: var(--ink);
-    margin-bottom: 16px;
+  .progress-track { display: flex; gap: 5px; align-items: center; }
+  .pip {
+    width: 22px; height: 3px; border-radius: 2px;
+    background: rgba(200,130,26,0.2);
+    transition: background 0.4s ease;
   }
-  .subtitle {
-    font-weight: 300;
-    color: #555;
-    font-size: 1.05rem;
-  }
-  .timer-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--ink);
-    color: var(--paper);
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    padding: 6px 14px;
-    border-radius: 2px;
-    margin-top: 18px;
+  .pip.active { background: var(--amber); }
+  .pip.done   { background: rgba(200,130,26,0.55); }
+  .header-timer {
+    font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.06em;
   }
 
-  /* ── NAV DOTS ── */
-  #step-nav {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    padding: 22px 0 10px;
-    position: sticky;
-    top: var(--progress-h);
-    background: var(--paper);
-    z-index: 90;
-    border-bottom: 1px solid #ddd;
-  }
-  .dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: #ccc;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
-    border: none;
-  }
-  .dot.active { background: var(--teal); transform: scale(1.35); }
-  .dot.done { background: var(--gold); }
+  /* ── STAGE ── */
+  .stage { padding-top: 80px; min-height: 100vh; }
 
-  /* ── SECTIONS ── */
-  main { max-width: 820px; margin: 0 auto; padding: 0 24px 80px; }
-
-  .section {
-    display: none;
-    animation: fadeIn 0.5s ease;
-    padding: 48px 0 24px;
+  .screen {
+    display: none; max-width: 760px;
+    margin: 0 auto; padding: 52px 28px 96px;
+    width: 100%;
   }
-  .section.active { display: block; }
+  .screen.active {
+    display: block;
+    animation: fadeUp 0.45s ease forwards;
+  }
 
-  @keyframes fadeIn {
+  @keyframes fadeUp {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 8px;
+  /* ── SECTION TAG ── */
+  .section-tag {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 12px;
   }
-  .section h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.9rem;
-    margin-bottom: 20px;
-    color: var(--ink);
+  .section-tag::after {
+    content: ''; flex: 1; height: 1px; background: var(--border-amber);
   }
-  .section p { margin-bottom: 14px; color: #333; }
 
-  /* ── CALLOUT BOX ── */
+  /* ── TYPOGRAPHY ── */
+  h1 {
+    font-family: var(--display); font-weight: 900;
+    font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.08;
+    color: var(--paper); margin-bottom: 22px;
+  }
+  h1 em { font-style: italic; color: var(--amber-light); }
+
+  h2 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.1;
+    color: var(--paper); margin-bottom: 20px;
+  }
+  h2 em { font-style: italic; color: var(--amber-light); }
+
+  h3 {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber);
+    margin: 30px 0 10px;
+  }
+
+  p { color: var(--cream); margin-bottom: 16px; }
+  .callout p:last-child,
+  .screen > p:last-of-type { margin-bottom: 0; }
+  strong { color: var(--paper); font-weight: 600; }
+  em { color: var(--amber-light); font-style: italic; }
+
+  .divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+  /* ── CALLOUT ── */
   .callout {
-    border-left: 4px solid var(--teal);
-    background: var(--teal-light);
-    padding: 18px 22px;
-    margin: 24px 0;
+    border-left: 3px solid var(--amber);
+    padding: 16px 20px;
+    background: var(--amber-dim);
     border-radius: 0 6px 6px 0;
-  }
-  .callout.gold {
-    border-color: var(--gold);
-    background: #fdf6e3;
-  }
-  .callout.rust {
-    border-color: var(--rust);
-    background: #fdf0ec;
-  }
-  .callout strong { color: var(--teal); }
-  .callout.gold strong { color: #7a5c0d; }
-  .callout.rust strong { color: var(--rust); }
-
-  /* ── COMPARISON TABLE ── */
-  .compare-table {
-    width: 100%;
-    border-collapse: collapse;
     margin: 24px 0;
-    font-size: 0.93rem;
   }
-  .compare-table th {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 12px 18px;
-    text-align: left;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+  .callout p { margin: 0; color: var(--cream); }
+  .callout p + p { margin-top: 8px; }
+
+  /* ── EXAMPLE PAIR ── */
+  .example-pair {
+    background: var(--card);
+    border: 1px solid var(--border-amber);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 0 20px;
   }
-  .compare-table td {
-    padding: 12px 18px;
-    border-bottom: 1px solid #ddd;
+  .example-pair.single { grid-template-columns: 1fr; }
+  .ex-divider { background: var(--border-amber); align-self: stretch; }
+  .ex-label {
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .ex-text { font-style: italic; color: var(--paper); font-size: 1rem; line-height: 1.55; }
+
+  /* ── TABLE ── */
+  .rs-table {
+    width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.92rem;
+  }
+  .rs-table th {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--amber);
+    padding: 10px 16px; text-align: left;
+    border-bottom: 1px solid var(--border-amber);
+  }
+  .rs-table td {
+    padding: 12px 16px; color: var(--cream);
+    border-bottom: 1px solid var(--border);
     vertical-align: top;
   }
-  .compare-table tr:nth-child(even) td { background: var(--cream); }
-  .compare-table .arrow { color: var(--teal); font-weight: 600; margin: 0 6px; }
+  .rs-table tr:last-child td { border-bottom: none; }
+  .rs-table tr:hover td { background: rgba(200,130,26,0.04); }
 
   /* ── BACKSHIFT GRID ── */
   .backshift-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin: 20px 0;
+    display: grid; grid-template-columns: 1fr 42px 1fr;
+    gap: 8px 0; margin: 24px 0; align-items: center;
   }
-  .shift-card {
-    background: #fff;
-    border: 1.5px solid var(--cream);
-    border-radius: 8px;
-    padding: 14px 16px;
-    font-size: 0.9rem;
+  .bs-from {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px; padding: 10px 16px;
+    font-family: var(--mono); font-size: 0.8rem; color: var(--paper);
+    text-align: center; line-height: 1.4;
   }
-  .shift-card .from { color: var(--rust); font-family: 'DM Mono', monospace; font-size: 0.82rem; }
-  .shift-card .to   { color: var(--teal); font-family: 'DM Mono', monospace; font-size: 0.82rem; }
-  .shift-card .arr  { color: #999; margin: 4px 0; }
+  .bs-arrow { text-align: center; color: var(--amber); font-size: 1.2rem; }
+  .bs-to {
+    background: var(--amber-dim);
+    border: 1px solid var(--border-amber);
+    border-radius: 6px; padding: 10px 16px;
+    font-family: var(--mono); font-size: 0.8rem; color: var(--amber-light);
+    text-align: center; line-height: 1.4;
+  }
+  .bs-from small, .bs-to small { display: block; opacity: 0.7; font-size: 0.75em; margin-top: 2px; }
+
+  /* ── VERB BANK ── */
+  .verb-bank {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0;
+  }
+  .verb-chip {
+    font-family: var(--mono); font-size: 12px;
+    padding: 6px 14px; border-radius: 3px;
+    border: 1px solid var(--border-amber);
+    background: transparent; color: var(--muted);
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em;
+  }
+  .verb-chip:hover, .verb-chip.active {
+    background: var(--amber-dim); border-color: var(--amber); color: var(--amber-light);
+  }
+  .verb-info {
+    min-height: 58px; padding: 13px 18px;
+    border-left: 2px solid var(--amber);
+    background: rgba(200,130,26,0.07);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.91rem; color: var(--cream);
+    font-style: italic;
+    display: flex; align-items: center; gap: 14px;
+    margin-top: 4px;
+  }
+  .verb-info .pattern {
+    font-family: var(--mono); font-size: 10px; font-style: normal;
+    color: var(--amber); letter-spacing: 0.1em; text-transform: uppercase;
+    white-space: nowrap; flex-shrink: 0;
+  }
+
+  /* ── USAGE CARDS ── */
+  .usage-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin: 24px 0;
+  }
+  .usage-card {
+    background: rgba(245,240,232,0.04);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+  }
+  .usage-card:nth-child(1) { border-radius: 6px 0 0 0; }
+  .usage-card:nth-child(2) { border-radius: 0 6px 0 0; }
+  .usage-card:nth-child(3) { border-radius: 0 0 0 6px; }
+  .usage-card:nth-child(4) { border-radius: 0 0 6px 0; }
+  .usage-card .tag {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--amber); margin-bottom: 10px; display: block;
+  }
+  .usage-card .rule { color: var(--cream); font-size: 14px; line-height: 1.55; }
+  .usage-card .example-line {
+    margin-top: 10px; font-style: italic; color: var(--muted); font-size: 13px;
+  }
 
   /* ── QUIZ ── */
   .quiz-question {
-    background: #fff;
-    border: 2px solid var(--cream);
-    border-radius: 10px;
-    padding: 24px;
     margin-bottom: 24px;
+    padding: 22px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 0.3s;
   }
-  .quiz-question .q-text {
-    font-size: 1.05rem;
+  .quiz-question.answered { border-color: var(--border-amber); }
+  .q-number {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 12px;
+  }
+  .quiz-stem {
+    font-family: var(--display); font-style: italic;
+    font-size: 1.1rem; color: var(--paper); line-height: 1.4;
     margin-bottom: 16px;
   }
-  .quiz-question .q-text em { color: var(--teal); font-style: normal; font-weight: 500; }
-  .options { display: flex; flex-direction: column; gap: 10px; }
-  .option-btn {
-    text-align: left;
-    background: var(--paper);
-    border: 1.5px solid #ccc;
-    border-radius: 6px;
-    padding: 11px 16px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    transition: all 0.2s;
+  .quiz-stem strong {
+    background: rgba(200,130,26,0.18);
+    padding: 1px 5px; border-radius: 3px;
+    color: var(--amber-light); font-style: normal;
   }
-  .option-btn:hover { border-color: var(--teal); background: var(--teal-light); }
-  .option-btn.correct { background: #d4f4e8; border-color: var(--teal); color: #0d5c45; }
-  .option-btn.wrong   { background: #fde8e8; border-color: var(--red);  color: var(--red); }
-  .option-btn:disabled { cursor: default; }
-  .feedback {
-    margin-top: 12px;
-    font-size: 0.9rem;
-    padding: 10px 14px;
-    border-radius: 6px;
-    display: none;
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent; color: var(--cream);
+    cursor: pointer; font-family: var(--serif);
+    font-size: 0.92rem; text-align: left;
+    transition: all 0.2s; width: 100%;
   }
-  .feedback.show { display: block; }
-  .feedback.ok  { background: #d4f4e8; color: #0d5c45; }
-  .feedback.err { background: #fde8e8; color: var(--red); }
+  .quiz-opt:hover:not(:disabled) {
+    border-color: var(--border-amber); background: var(--amber-dim);
+  }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-opt.correct { border-color: var(--correct); background: var(--correct-bg); color: #7ec8a0; }
+  .quiz-opt.wrong   { border-color: var(--wrong);   background: var(--wrong-bg);  color: #c87070; }
+  .opt-key {
+    font-family: var(--mono); font-size: 10px;
+    width: 22px; height: 22px; border-radius: 3px;
+    border: 1px solid rgba(245,240,232,0.2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; letter-spacing: 0.05em; text-transform: uppercase;
+  }
 
-  /* ── TRANSFORM EXERCISE ── */
-  .transform-ex {
-    background: #fff;
-    border: 2px solid var(--cream);
-    border-radius: 10px;
-    padding: 22px;
-    margin-bottom: 20px;
+  /* ── FEEDBACK ── */
+  .feedback-note {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    margin-top: 10px; padding-left: 2px; letter-spacing: 0.04em;
+    display: none; line-height: 1.5;
   }
+  .feedback-note.show { display: block; }
+  .feedback-note.ok { color: #7ec8a0; }
+  .feedback-note.no { color: #c87070; }
+
+  /* ── QUIZ SCORE BAR ── */
+  .score-tracker {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .score-tracker .s-val { color: var(--amber-light); }
+
+  /* ── WRITING PRACTICE ── */
+  .practice-item { margin-bottom: 28px; }
   .direct-quote {
-    font-style: italic;
-    color: #444;
-    margin-bottom: 12px;
-    padding: 10px 16px;
-    background: var(--cream);
-    border-radius: 4px;
-    font-family: 'Playfair Display', serif;
+    font-style: italic; color: var(--paper);
+    padding: 14px 18px;
+    background: var(--card);
+    border-radius: 6px 6px 0 0;
+    border: 1px solid var(--border); border-bottom: none;
+    font-size: 1rem;
   }
-  .transform-input {
-    width: 100%;
-    border: 1.5px solid #ccc;
-    border-radius: 6px;
-    padding: 10px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    background: var(--paper);
-    color: var(--ink);
-    outline: none;
+  .direct-quote .speaker {
+    font-style: normal; font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 4px;
+  }
+  .answer-row { display: flex; }
+  .answer-input {
+    flex: 1;
+    background: rgba(245,240,232,0.04);
+    border: 1px solid rgba(245,240,232,0.15); border-radius: 0 0 0 6px;
+    padding: 12px 16px; color: var(--paper);
+    font-family: var(--serif); font-size: 0.95rem; outline: none;
     transition: border-color 0.2s;
   }
-  .transform-input:focus { border-color: var(--teal); }
+  .answer-input:focus  { border-color: var(--amber); }
+  .answer-input.correct{ border-color: var(--correct); background: var(--correct-bg); }
+  .answer-input.wrong  { border-color: var(--wrong);   background: var(--wrong-bg); }
   .check-btn {
-    margin-top: 10px;
-    background: var(--teal);
-    color: #fff;
-    border: none;
-    padding: 9px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    transition: background 0.2s;
+    background: var(--amber); border: none;
+    padding: 12px 20px; color: var(--ink);
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; border-radius: 0 0 6px 0;
+    transition: background 0.2s; flex-shrink: 0;
   }
-  .check-btn:hover { background: #236358; }
+  .check-btn:hover    { background: var(--amber-light); }
+  .check-btn:disabled { background: rgba(200,130,26,0.3); cursor: default; color: var(--muted); }
+  .model-answer {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    padding: 8px 16px; display: none; letter-spacing: 0.02em;
+  }
+  .model-answer.show { display: block; }
+  .model-answer .label { color: var(--amber); margin-right: 6px; }
 
-  /* ── SCORE ── */
-  .score-display {
-    text-align: center;
-    padding: 40px 20px;
+  /* ── INTRO ── */
+  .intro-meta { display: flex; gap: 10px; flex-wrap: wrap; margin: 24px 0 32px; }
+  .meta-chip {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 8px 14px; border: 1px solid var(--border-amber);
+    border-radius: 3px; color: var(--muted);
   }
-  .score-circle {
-    width: 130px; height: 130px;
-    border-radius: 50%;
-    border: 5px solid var(--teal);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    margin-bottom: 20px;
+  .intro-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 28px 0;
   }
-  .score-num { font-size: 2.5rem; font-weight: 700; color: var(--teal); line-height: 1; }
-  .score-label { font-size: 0.8rem; color: #888; }
-  .score-msg { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
+  .intro-stat {
+    padding: 16px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 6px; text-align: center;
+  }
+  .intro-stat .s-num {
+    font-family: var(--display); font-size: 1.7rem; font-weight: 900;
+    color: rgba(200,130,26,0.55); display: block;
+  }
+  .intro-stat .s-lbl {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted); margin-top: 4px; display: block;
+  }
 
-  /* ── VERB TAGS ── */
-  .verb-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
-  .v-tag {
-    background: var(--ink);
-    color: var(--paper);
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    padding: 5px 12px;
-    border-radius: 3px;
-    letter-spacing: 0.5px;
+  /* ── RESULTS ── */
+  .results-hero { text-align: center; padding: 56px 0 36px; }
+  .results-score {
+    font-family: var(--display); font-size: clamp(4rem,12vw,7rem); font-weight: 900;
+    color: var(--amber-light); line-height: 1; display: block;
   }
-  .v-tag.teal { background: var(--teal); }
+  .results-denom {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--muted); margin-top: 8px;
+  }
+  .results-msg {
+    font-family: var(--display); font-style: italic;
+    font-size: 1.15rem; color: var(--cream); margin-top: 18px;
+  }
+  .results-breakdown {
+    display: flex; gap: 10px; justify-content: center; margin-top: 20px;
+  }
+  .breakdown-pill {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    padding: 6px 14px; border: 1px solid var(--border-amber);
+    border-radius: 100px; color: var(--muted);
+  }
+  .breakdown-pill span { color: var(--amber-light); }
 
-  /* ── NAV BUTTONS ── */
-  .btn-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 36px;
-    padding-top: 24px;
-    border-top: 1px solid #ddd;
+  .rule-card {
+    display: grid; grid-template-columns: 36px 1fr;
+    gap: 10px 14px; align-items: start;
+    padding: 16px; background: var(--card);
+    border: 1px solid var(--border); border-radius: 6px; margin-bottom: 10px;
+  }
+  .rule-num {
+    font-family: var(--display); font-size: 1.7rem; font-weight: 900;
+    color: rgba(200,130,26,0.35); line-height: 1; text-align: center;
+  }
+  .rule-text { color: var(--cream); font-size: 0.92rem; padding-top: 3px; }
+  .rule-text strong { color: var(--amber-light); }
+
+  /* ── NAV ── */
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 44px; padding-top: 24px;
+    border-top: 1px solid var(--border);
   }
   .nav-btn {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    padding: 11px 28px;
-    border-radius: 4px;
-    cursor: pointer;
-    border: 2px solid var(--ink);
+    font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 12px 24px; border-radius: 4px;
+    cursor: pointer; border: 1px solid; transition: all 0.2s;
     background: transparent;
-    color: var(--ink);
-    letter-spacing: 0.5px;
-    transition: all 0.2s;
   }
-  .nav-btn.primary { background: var(--ink); color: var(--paper); }
-  .nav-btn:hover   { opacity: 0.78; }
-  .nav-btn:disabled { opacity: 0.3; cursor: default; }
-  .step-info { font-family: 'DM Mono', monospace; font-size: 12px; color: #888; }
+  .nav-btn.back  { color: var(--muted); border-color: var(--border); }
+  .nav-btn.back:hover  { color: var(--paper); border-color: rgba(245,240,232,0.3); }
+  .nav-btn.forward { color: var(--ink); background: var(--amber); border-color: var(--amber); }
+  .nav-btn.forward:hover { background: var(--amber-light); border-color: var(--amber-light); }
+  .nav-btn.restart { color: var(--amber); border-color: var(--amber); margin: 0 auto; }
+  .nav-btn.restart:hover { background: var(--amber-dim); }
+  .step-indicator {
+    font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.1em;
+  }
 
-  /* ── HIGHLIGHT SPANS ── */
-  .hl-teal  { color: var(--teal); font-weight: 600; }
-  .hl-rust  { color: var(--rust); font-weight: 600; }
-  .hl-gold  { color: var(--gold); font-weight: 600; }
-
+  /* ── RESPONSIVE ── */
   @media (max-width: 600px) {
-    header { padding: 50px 20px 30px; }
-    .backshift-grid { grid-template-columns: 1fr; }
+    .screen { padding: 40px 20px 80px; }
+    .example-pair { grid-template-columns: 1fr; }
+    .ex-divider { display: none; }
+    .usage-grid { grid-template-columns: 1fr; }
+    .usage-card { border-radius: 0 !important; }
+    .usage-card:first-child { border-radius: 6px 6px 0 0 !important; }
+    .usage-card:last-child  { border-radius: 0 0 6px 6px !important; }
+    .intro-grid { grid-template-columns: 1fr 1fr; }
+    .backshift-grid { font-size: 0.76rem; }
+    .results-breakdown { flex-direction: column; align-items: center; }
+  }
+
+  mark {
+    background: rgba(200,130,26,0.18);
+    color: var(--amber-light); padding: 1px 4px; border-radius: 3px;
   }
 </style>
 </head>
 <body>
 
-<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
-
-<header>
-  <p class="lesson-tag">Grammar · Intermediate</p>
-  <h1>Changing Direct Speech<br><em>to Reported Speech</em></h1>
-  <p class="subtitle">A guided 20-minute lesson with examples, explanations, and practice exercises.</p>
-  <div class="timer-badge">⏱ ~20 min &nbsp;·&nbsp; 6 sections</div>
+<!-- ── HEADER ── -->
+<header class="site-header">
+  <span class="header-label">Reported Speech</span>
+  <div class="progress-track" id="pipTrack"></div>
+  <span class="header-timer">⏱ ~20 min</span>
 </header>
 
-<div id="step-nav"></div>
+<div class="stage">
 
-<main>
+<!-- ═══════════════════════════════════
+     S0 · INTRO
+═══════════════════════════════════ -->
+<div class="screen active" id="s0">
+  <div class="section-tag">20-Minute Lesson · Grammar · B1–B2</div>
+  <h1>She said she <em>couldn't</em> come.</h1>
+  <p>But her exact words were <em>"I can't come."</em> Something changed. In this lesson you'll learn exactly what — and why it matters every time you report what someone said, wrote, or asked.</p>
 
-<!-- ══════════════════════════════════════════
-     SECTION 1 – WHAT IS IT?
-══════════════════════════════════════════ -->
-<section class="section" id="s1">
-  <p class="section-label">Section 1 of 6</p>
-  <h2>What Is Reported Speech?</h2>
-  <p>Sometimes we want to tell someone what another person said. We have two ways to do this:</p>
-
-  <div class="callout">
-    <p><strong>Direct speech</strong> — quote the exact words, using quotation marks:<br>
-    <em>"I work in a bank," said Daniel.</em></p>
-  </div>
-  <div class="callout gold">
-    <p><strong>Reported (indirect) speech</strong> — describe what was said, without quotes:<br>
-    <em>Daniel said that he <span class="hl-teal">worked</span> in a bank.</em></p>
+  <div class="intro-meta">
+    <span class="meta-chip">7 Screens</span>
+    <span class="meta-chip">~20 minutes</span>
+    <span class="meta-chip">Intermediate</span>
+    <span class="meta-chip">AI-graded writing</span>
   </div>
 
-  <p>Notice two things changed in reported speech:</p>
-  <ol style="margin: 12px 0 12px 22px; line-height: 2;">
-    <li>The <strong>quotation marks</strong> disappeared.</li>
-    <li>The verb <em>work</em> shifted back a tense to <em><span class="hl-teal">worked</span></em>. This is called <strong>backshift</strong>.</li>
-  </ol>
+  <div class="intro-grid">
+    <div class="intro-stat"><span class="s-num">15</span><span class="s-lbl">Reporting verbs</span></div>
+    <div class="intro-stat"><span class="s-num">6</span><span class="s-lbl">Tense shifts</span></div>
+    <div class="intro-stat"><span class="s-num">5</span><span class="s-lbl">Quiz questions</span></div>
+    <div class="intro-stat"><span class="s-num">5</span><span class="s-lbl">Writing tasks</span></div>
+    <div class="intro-stat"><span class="s-num">4</span><span class="s-lbl">Types of speech</span></div>
+    <div class="intro-stat"><span class="s-num">4</span><span class="s-lbl">Key rules</span></div>
+  </div>
 
-  <table class="compare-table">
-    <thead><tr><th>Direct</th><th>Reported (Indirect)</th></tr></thead>
+  <div class="nav-row">
+    <div></div>
+    <button class="nav-btn forward" onclick="go(1)">Begin Lesson →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     S1 · WHAT IS IT?
+═══════════════════════════════════ -->
+<div class="screen" id="s1">
+  <div class="section-tag">Section 1 of 6 · Foundations</div>
+  <h2>What Is <em>Reported Speech?</em></h2>
+  <p>Imagine you're telling a friend about a conversation you had. You have two choices:</p>
+
+  <div class="example-pair">
+    <div>
+      <div class="ex-label">Direct — exact words</div>
+      <div class="ex-text">"I work in a bank," said Daniel.</div>
+    </div>
+    <div class="ex-divider"></div>
+    <div>
+      <div class="ex-label">Reported — your words</div>
+      <div class="ex-text">Daniel said that he <strong style="color:var(--amber-light)">worked</strong> in a bank.</div>
+    </div>
+  </div>
+
+  <p>Two things happened when we reported Daniel's words. The quotation marks disappeared — we are no longer quoting. And the verb <em>work</em> shifted back to <em>worked</em>. This shift is called <strong>backshift</strong>.</p>
+
+  <div class="divider"></div>
+
+  <table class="rs-table">
+    <thead>
+      <tr><th>Direct Speech</th><th>Reported (Indirect) Speech</th></tr>
+    </thead>
     <tbody>
-      <tr><td>Do <strong>not</strong> transform the sentence</td><td>Transform the sentence</td></tr>
-      <tr><td>Quote the speaker's exact words</td><td>Do <strong>not</strong> quote exact words</td></tr>
-      <tr><td>No change of tense</td><td>Shift one tense back <em>(backshift)</em></td></tr>
-      <tr><td>Words go in quotes <code>""</code></td><td>Use a <strong>reporting verb</strong> + <em>that / if</em></td></tr>
+      <tr><td>Quote the speaker's exact words</td><td>Describe what was said</td></tr>
+      <tr><td>Words go in quotes <em>""</em></td><td>Use a <strong>reporting verb</strong> + <em>that / if / to</em></td></tr>
+      <tr><td>No change of tense</td><td>Tense shifts one step back <em>(backshift)</em></td></tr>
     </tbody>
   </table>
 
-  <div class="btn-row">
-    <button class="nav-btn" disabled>← Back</button>
-    <span class="step-info" id="step-label-1">1 / 6</span>
-    <button class="nav-btn primary" onclick="goTo(2)">Continue →</button>
+  <div class="callout">
+    <p><strong>Why does this matter?</strong> Reported speech appears in news articles, academic writing, conversations, and interviews. Every time you say <em>"She told me that…"</em> or <em>"They asked whether…"</em> — you're using it.</p>
   </div>
-</section>
 
-<!-- ══════════════════════════════════════════
-     SECTION 2 – REPORTING VERBS
-══════════════════════════════════════════ -->
-<section class="section" id="s2">
-  <p class="section-label">Section 2 of 6</p>
-  <h2>Reporting Verbs &amp; How to Use Them</h2>
-  <p>Instead of always using <em>say</em>, English has many <strong>reporting verbs</strong> that add meaning:</p>
-
-  <div class="verb-list">
-    <span class="v-tag">say</span><span class="v-tag">tell</span><span class="v-tag">ask</span>
-    <span class="v-tag">believe</span><span class="v-tag">reply</span><span class="v-tag">respond</span>
-    <span class="v-tag">advise</span><span class="v-tag">agree</span><span class="v-tag">challenge</span>
-    <span class="v-tag">claim</span><span class="v-tag">decide</span><span class="v-tag">demand</span>
-    <span class="v-tag">invite</span><span class="v-tag">offer</span><span class="v-tag">persuade</span>
-    <span class="v-tag">promise</span><span class="v-tag">refuse</span><span class="v-tag">remind</span>
+  <h3>Four Types to Know</h3>
+  <div class="usage-grid">
+    <div class="usage-card">
+      <span class="tag">Statements</span>
+      <div class="rule">Use <strong>say / tell</strong> + <em>that</em>-clause. <em>That</em> is optional.</div>
+      <div class="example-line">"I'm tired." → She said <em>that</em> she was tired.</div>
+    </div>
+    <div class="usage-card">
+      <span class="tag">Yes / No Questions</span>
+      <div class="rule">Use <strong>ask</strong> + <em>if / whether</em> + normal word order. Drop <em>do / does / did</em>.</div>
+      <div class="example-line">"Are you coming?" → He asked <em>if</em> I was coming.</div>
+    </div>
+    <div class="usage-card">
+      <span class="tag">Wh- Questions</span>
+      <div class="rule">Use <strong>ask</strong> + wh-word + normal S–V order. Drop <em>do / does / did</em>.</div>
+      <div class="example-line">"Where do you live?" → She asked where I <em>lived</em>.</div>
+    </div>
+    <div class="usage-card">
+      <span class="tag">Commands &amp; Requests</span>
+      <div class="rule">Use <strong>tell / ask / advise</strong> + object + <em>to-infinitive</em>. Negative: <em>not to</em>.</div>
+      <div class="example-line">"Open the window." → She told me <em>to open</em> the window.</div>
+    </div>
   </div>
+
+  <div class="nav-row">
+    <button class="nav-btn back" onclick="go(0)">← Back</button>
+    <span class="step-indicator">1 / 6</span>
+    <button class="nav-btn forward" onclick="go(2)">Continue →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     S2 · REPORTING VERBS
+═══════════════════════════════════ -->
+<div class="screen" id="s2">
+  <div class="section-tag">Section 2 of 6 · Reporting Verbs</div>
+  <h2>Reporting Verbs &amp; <em>How to Use Them</em></h2>
+  <p>Instead of always using <em>say</em>, English has many reporting verbs that carry extra meaning. Select a verb below to see its pattern and an example:</p>
+
+  <div class="verb-bank" id="verbBank"></div>
+  <div class="verb-info" id="verbInfo">
+    <span style="color:var(--muted);font-style:italic;font-size:0.9rem">Select a verb above ↑</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>Patterns at a Glance</h3>
+  <table class="rs-table">
+    <thead><tr><th>Use case</th><th>Pattern</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Statements</td><td><em>verb + that</em></td><td>She said <em>that</em> she was tired.</td></tr>
+      <tr><td>Yes/no questions</td><td><em>verb + if / whether</em></td><td>He asked <em>if</em> I was coming.</td></tr>
+      <tr><td>Commands / requests</td><td><em>verb + obj + to-infinitive</em></td><td>She told me <em>to open</em> the window.</td></tr>
+      <tr><td>"Suggest" (special)</td><td><em>suggest + …ing</em> or <em>suggest that…</em></td><td>She suggested <em>leaving</em> early.</td></tr>
+    </tbody>
+  </table>
 
   <div class="callout">
-    <p><strong>For statements</strong> → use the reporting verb + <strong>that</strong><br>
-    <em>She <span class="hl-teal">said that</span> she was tired.</em></p>
-  </div>
-  <div class="callout gold">
-    <p><strong>For questions</strong> → use the reporting verb + <strong>if / whether</strong><br>
-    <em>He <span class="hl-gold">asked if</span> I was coming.</em></p>
-  </div>
-  <div class="callout rust">
-    <p><strong>For commands / requests / advice</strong> → use <strong>to‑infinitive</strong><br>
-    <em>She <span class="hl-rust">told me to open</span> the window.</em><br>
-    <em>The doctor <span class="hl-rust">advised me to eat</span> more fruit.</em></p>
+    <p><strong>Watch out:</strong> <em>Suggest</em> never takes a to-infinitive.</p>
+    <p style="margin-top:8px;"><span style="color:var(--muted)">✗ She suggested to leave.</span> &ensp; ✓ She suggested leaving. &ensp; ✓ She suggested that we leave.</p>
   </div>
 
-  <p style="margin-top:16px;"><strong>Special case — "suggest":</strong> it cannot use a to‑infinitive. Use <strong>suggest + …ing</strong> or <strong>suggest that…</strong></p>
-  <div class="callout">
-    <p><em>Miss Bell suggested <span class="hl-teal">talking</span> to our parents first.</em><br>
-    <em>Miss Bell suggested <span class="hl-teal">that we talk</span> to our parents first.</em></p>
+  <div class="nav-row">
+    <button class="nav-btn back" onclick="go(1)">← Back</button>
+    <span class="step-indicator">2 / 6</span>
+    <button class="nav-btn forward" onclick="go(3)">Continue →</button>
   </div>
+</div>
 
-  <p><strong>Command verbs</strong> (tell, order, instruct, direct, warn) are always followed by a to‑infinitive.</p>
-
-  <div class="btn-row">
-    <button class="nav-btn" onclick="goTo(1)">← Back</button>
-    <span class="step-info">2 / 6</span>
-    <button class="nav-btn primary" onclick="goTo(3)">Continue →</button>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════
-     SECTION 3 – BACKSHIFT
-══════════════════════════════════════════ -->
-<section class="section" id="s3">
-  <p class="section-label">Section 3 of 6</p>
-  <h2>Backshift: Shifting Tenses Back</h2>
-  <p>When the reporting verb is in the past (<em>said, told</em>, etc.), the tense of the original verb <strong>shifts back</strong> one step.</p>
+<!-- ═══════════════════════════════════
+     S3 · BACKSHIFT
+═══════════════════════════════════ -->
+<div class="screen" id="s3">
+  <div class="section-tag">Section 3 of 6 · Backshift</div>
+  <h2>Backshift: <em>How Tenses Shift</em></h2>
+  <p>When the reporting verb is past (<em>said, told…</em>), the verb inside the reported clause shifts one step back in time:</p>
 
   <div class="backshift-grid">
-    <div class="shift-card">
-      <div class="from">present simple</div>
-      <div class="arr">↓</div>
-      <div class="to">past simple</div>
-    </div>
-    <div class="shift-card">
-      <div class="from">past simple</div>
-      <div class="arr">↓</div>
-      <div class="to">past perfect</div>
-    </div>
-    <div class="shift-card">
-      <div class="from">present perfect</div>
-      <div class="arr">↓</div>
-      <div class="to">past perfect</div>
-    </div>
-    <div class="shift-card">
-      <div class="from">will + infinitive</div>
-      <div class="arr">↓</div>
-      <div class="to">would + infinitive</div>
-    </div>
-    <div class="shift-card">
-      <div class="from">can</div>
-      <div class="arr">↓</div>
-      <div class="to">could</div>
-    </div>
-    <div class="shift-card">
-      <div class="from">is / am / are going to</div>
-      <div class="arr">↓</div>
-      <div class="to">was / were going to</div>
-    </div>
+    <div class="bs-from">present simple<br><small>"I work"</small></div>
+    <div class="bs-arrow">→</div>
+    <div class="bs-to">past simple<br><small>she worked</small></div>
+
+    <div class="bs-from">past simple<br><small>"I worked"</small></div>
+    <div class="bs-arrow">→</div>
+    <div class="bs-to">past perfect<br><small>she had worked</small></div>
+
+    <div class="bs-from">present perfect<br><small>"I have worked"</small></div>
+    <div class="bs-arrow">→</div>
+    <div class="bs-to">past perfect<br><small>she had worked</small></div>
+
+    <div class="bs-from">will + inf<br><small>"I will come"</small></div>
+    <div class="bs-arrow">→</div>
+    <div class="bs-to">would + inf<br><small>she would come</small></div>
+
+    <div class="bs-from">can<br><small>"I can swim"</small></div>
+    <div class="bs-arrow">→</div>
+    <div class="bs-to">could<br><small>she could swim</small></div>
+
+    <div class="bs-from">going to<br><small>"I'm going to leave"</small></div>
+    <div class="bs-arrow">→</div>
+    <div class="bs-to">was/were going to<br><small>she was going to leave</small></div>
   </div>
 
-  <table class="compare-table" style="margin-top:8px;">
+  <div class="divider"></div>
+
+  <h3>Examples in Context</h3>
+  <table class="rs-table">
     <thead><tr><th>Direct Speech</th><th>Indirect Speech</th></tr></thead>
     <tbody>
-      <tr>
-        <td>"Your times <strong>are</strong> really good."</td>
-        <td>Coach told me my times <span class="hl-teal"><strong>were</strong></span> really good.</td>
-      </tr>
-      <tr>
-        <td>"Drew <strong>asked</strong> me for a date."</td>
-        <td>Kaya said Drew <span class="hl-teal"><strong>had asked</strong></span> her for a date.</td>
-      </tr>
-      <tr>
-        <td>"I <strong>have practised</strong> a lot."</td>
-        <td>Drew told me that he <span class="hl-teal"><strong>had practised</strong></span> a lot.</td>
-      </tr>
-      <tr>
-        <td>"I'm sure you <strong>will</strong> qualify."</td>
-        <td>Drew said he was sure Kaya <span class="hl-teal"><strong>would</strong></span> qualify.</td>
-      </tr>
-      <tr>
-        <td>"You <strong>can</strong> use the truck."</td>
-        <td>His dad said Drew <span class="hl-teal"><strong>could</strong></span> use the truck.</td>
-      </tr>
+      <tr><td>"Your times <strong>are</strong> really good."</td><td>She said my times <em>were</em> really good.</td></tr>
+      <tr><td>"I <strong>called</strong> you twice."</td><td>He said he <em>had called</em> me twice.</td></tr>
+      <tr><td>"I <strong>have never been</strong> to Paris."</td><td>She said she <em>had never been</em> to Paris.</td></tr>
+      <tr><td>"I'm sure you <strong>will</strong> qualify."</td><td>He said he was sure she <em>would</em> qualify.</td></tr>
+      <tr><td>"You <strong>can</strong> use the truck."</td><td>His dad said he <em>could</em> use the truck.</td></tr>
     </tbody>
   </table>
 
-  <div class="callout rust" style="margin-top:20px;">
-    <p><strong>Indirect questions</strong> — word order changes to <em>S – V – …</em> and <em>do/does/did</em> is dropped.<br>
-    <em>"Where do they live?" → She asked where <span class="hl-rust">they lived.</span></em></p>
+  <h3>Time &amp; Place Shifts</h3>
+  <div class="callout">
+    <p>Time and place references also shift: <em>now → then, today → that day, tomorrow → the next day, here → there, this → that.</em></p>
   </div>
 
-  <div class="btn-row">
-    <button class="nav-btn" onclick="goTo(2)">← Back</button>
-    <span class="step-info">3 / 6</span>
-    <button class="nav-btn primary" onclick="goTo(4)">Continue →</button>
+  <div class="nav-row">
+    <button class="nav-btn back" onclick="go(2)">← Back</button>
+    <span class="step-indicator">3 / 6</span>
+    <button class="nav-btn forward" onclick="go(4)">Continue →</button>
   </div>
-</section>
+</div>
 
-<!-- ══════════════════════════════════════════
-     SECTION 4 – QUICK QUIZ
-══════════════════════════════════════════ -->
-<section class="section" id="s4">
-  <p class="section-label">Section 4 of 6 — Quiz</p>
-  <h2>Quick Check: Multiple Choice</h2>
-  <p>Choose the best reported speech version for each sentence. Your score is recorded at the end!</p>
+<!-- ═══════════════════════════════════
+     S4 · QUIZ
+═══════════════════════════════════ -->
+<div class="screen" id="s4">
+  <div class="section-tag">Section 4 of 6 · Multiple Choice</div>
+  <h2>Quick Check</h2>
+  <p>Choose the best reported speech version. Your score is saved for the results page.</p>
 
-  <div id="quiz-container"></div>
-
-  <div class="btn-row">
-    <button class="nav-btn" onclick="goTo(3)">← Back</button>
-    <span class="step-info">4 / 6</span>
-    <button class="nav-btn primary" onclick="goTo(5)">Continue →</button>
+  <div class="score-tracker">
+    Score: <span class="s-val" id="quizScore">0</span> / 5
   </div>
-</section>
 
-<!-- ══════════════════════════════════════════
-     SECTION 5 – TRANSFORM PRACTICE
-══════════════════════════════════════════ -->
-<section class="section" id="s5">
-  <p class="section-label">Section 5 of 6 — Writing Practice</p>
-  <h2>Transform the Sentences</h2>
-  <p>Rewrite each direct speech sentence as reported speech. Type your answer and press <em>Check</em>.</p>
+  <div id="quizContainer"></div>
 
-  <div id="transform-container"></div>
-
-  <div class="btn-row">
-    <button class="nav-btn" onclick="goTo(4)">← Back</button>
-    <span class="step-info">5 / 6</span>
-    <button class="nav-btn primary" onclick="goTo(6)">See My Results →</button>
+  <div class="nav-row">
+    <button class="nav-btn back" onclick="go(3)">← Back</button>
+    <span class="step-indicator">4 / 6</span>
+    <button class="nav-btn forward" onclick="go(5)">Continue →</button>
   </div>
-</section>
+</div>
 
-<!-- ══════════════════════════════════════════
-     SECTION 6 – RESULTS
-══════════════════════════════════════════ -->
-<section class="section" id="s6">
-  <p class="section-label">Section 6 of 6 — Results</p>
-  <h2>Lesson Complete! 🎉</h2>
+<!-- ═══════════════════════════════════
+     S5 · WRITING
+═══════════════════════════════════ -->
+<div class="screen" id="s5">
+  <div class="section-tag">Section 5 of 6 · Writing Practice</div>
+  <h2>Transform the <em>Sentences</em></h2>
+  <p>Rewrite each sentence as reported speech. Type your answer and press Check — answers are graded by AI.</p>
 
-  <div class="score-display">
-    <div class="score-circle">
-      <div class="score-num" id="final-score">–</div>
-      <div class="score-label">/ 5 correct</div>
+  <div class="score-tracker">
+    Score: <span class="s-val" id="writeScore">0</span> / 5
+  </div>
+
+  <div id="writeContainer"></div>
+
+  <div class="nav-row">
+    <button class="nav-btn back" onclick="go(4)">← Back</button>
+    <span class="step-indicator">5 / 6</span>
+    <button class="nav-btn forward" onclick="go(6)">See Results →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     S6 · RESULTS
+═══════════════════════════════════ -->
+<div class="screen" id="s6">
+  <div class="section-tag">Section 6 of 6 · Results</div>
+
+  <div class="results-hero">
+    <span class="results-score" id="finalScore">–</span>
+    <div class="results-denom">out of 10 points</div>
+    <div class="results-msg" id="finalMsg"></div>
+    <div class="results-breakdown">
+      <div class="breakdown-pill">Quiz: <span id="bdQuiz">–</span> / 5</div>
+      <div class="breakdown-pill">Writing: <span id="bdWrite">–</span> / 5</div>
     </div>
-    <p class="score-msg" id="score-msg">Well done!</p>
-    <p id="score-detail" style="color:#555; max-width:420px; margin:0 auto;"></p>
   </div>
 
-  <h3 style="font-family:'Playfair Display',serif; margin: 32px 0 16px;">Key Rules to Remember</h3>
-  <div class="callout"><p><strong>1.</strong> Backshift tenses one step back when the reporting verb is in the past.</p></div>
-  <div class="callout gold"><p><strong>2.</strong> Use <em>that</em> for statements, <em>if/whether</em> for questions, and <em>to-infinitive</em> for commands.</p></div>
-  <div class="callout rust"><p><strong>3.</strong> <em>Suggest</em> is special — never use it with a to-infinitive. Use <em>suggest + …ing</em> or <em>suggest that</em>.</p></div>
-  <div class="callout"><p><strong>4.</strong> In indirect questions, use normal word order (S–V) and drop do/does/did.</p></div>
+  <div class="divider"></div>
 
-  <div class="btn-row" style="justify-content:center;">
-    <button class="nav-btn primary" onclick="restartLesson()">↺ Restart Lesson</button>
+  <h2>Key Rules to Remember</h2>
+
+  <div class="rule-card">
+    <div class="rule-num">1</div>
+    <div class="rule-text">Backshift tenses <strong>one step back</strong> when the reporting verb is in the past.</div>
   </div>
-</section>
+  <div class="rule-card">
+    <div class="rule-num">2</div>
+    <div class="rule-text">Use <strong>that</strong> for statements, <strong>if / whether</strong> for yes/no questions, and <strong>to-infinitive</strong> for commands.</div>
+  </div>
+  <div class="rule-card">
+    <div class="rule-num">3</div>
+    <div class="rule-text"><strong>Suggest</strong> is special — never with to-infinitive. Use <em>suggest + …ing</em> or <em>suggest that…</em></div>
+  </div>
+  <div class="rule-card">
+    <div class="rule-num">4</div>
+    <div class="rule-text">In <strong>indirect questions</strong>, use normal word order (S–V) and drop do / does / did.</div>
+  </div>
 
-</main>
+  <div class="nav-row">
+    <button class="nav-btn restart" onclick="restart()">↺ Restart Lesson</button>
+  </div>
+</div>
+
+</div><!-- /stage -->
 
 <script>
-/* ─── DATA ─────────────────────────────── */
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let current = 0;
+const TOTAL_SCREENS = 7; // 0-6
+const quizAnswers  = {}; // qi → boolean
+const writeResults = {}; // wi → boolean
+let writeGraded    = {}; // wi → true when graded
+
+// ══════════════════════════════════════════════
+// VERB DATA
+// ══════════════════════════════════════════════
+const verbs = {
+  say:       { pattern: 'say + that',                       ex: 'She said that she was tired.' },
+  tell:      { pattern: 'tell + sb + that',                 ex: 'He told me that he was leaving.' },
+  ask:       { pattern: 'ask + if/whether  OR  ask + wh-',  ex: 'She asked if I was coming. / She asked what I wanted.' },
+  advise:    { pattern: 'advise + sb + to-inf',             ex: 'The doctor advised her to rest.' },
+  agree:     { pattern: 'agree + to-inf  OR  agree + that', ex: 'He agreed to help. / She agreed that it was wrong.' },
+  believe:   { pattern: 'believe + that',                   ex: 'He believed that it was true.' },
+  challenge: { pattern: 'challenge + sb + to-inf',          ex: 'She challenged him to try again.' },
+  claim:     { pattern: 'claim + that',                     ex: 'He claimed that he was innocent.' },
+  decide:    { pattern: 'decide + to-inf  OR  decide + that', ex: 'She decided to leave early.' },
+  demand:    { pattern: 'demand + to-inf  OR  demand + that', ex: 'He demanded to speak to the manager.' },
+  invite:    { pattern: 'invite + sb + to-inf',             ex: 'She invited him to sit down.' },
+  offer:     { pattern: 'offer + to-inf',                   ex: 'He offered to carry her bags.' },
+  reply:     { pattern: 'reply + that',                     ex: 'She replied that she didn\'t know.' },
+  suggest:   { pattern: 'suggest + …ing  OR  suggest that… (NEVER to-inf)', ex: 'She suggested leaving early. / She suggested that they leave.' },
+  warn:      { pattern: 'warn + sb + not to-inf',           ex: 'He warned me not to touch it.' },
+};
+
+// ══════════════════════════════════════════════
+// QUIZ DATA  — 5 questions, 4 options each
+// ══════════════════════════════════════════════
 const quizData = [
   {
-    q: '"I <em>am</em> very happy," she said.',
-    options: [
-      'She said that she is very happy.',
-      'She said that she was very happy.',
-      'She said that she be very happy.',
-      'She told that she was very happy.'
+    stem: '"<strong>I can\'t come</strong> tonight," said Mara.',
+    opts: [
+      'Mara said she couldn\'t come that night.',
+      'Mara said she can\'t come tonight.',
+      'Mara told that she couldn\'t come tonight.',
+      'Mara said she can\'t come that night.',
     ],
-    correct: 1,
-    explanation: 'Present simple "am" → past simple "was" (backshift). "Said that" is correct; "told" requires an object person.'
+    ans: 0,
+    exp: '"can" → "could" (backshift). "tonight" → "that night" (time shift). "told" needs an object.'
   },
   {
-    q: '"Do you <em>like</em> coffee?" he asked.',
-    options: [
-      'He asked if I liked coffee.',
-      'He asked do I like coffee.',
-      'He asked that I liked coffee.',
-      'He said if I liked coffee.'
+    stem: '"<strong>Have you finished</strong> the report?" the manager asked.',
+    opts: [
+      'The manager asked did I finish the report.',
+      'The manager asked if I had finished the report.',
+      'The manager asked whether I have finished the report.',
+      'The manager asked if I finished the report.',
     ],
-    correct: 0,
-    explanation: '"if" introduces indirect yes/no questions. Normal word order: "I liked" (not "do I like"). "Said" doesn\'t introduce questions — "asked" does.'
+    ans: 1,
+    exp: 'Yes/no question → if/whether + normal word order. Present perfect → past perfect.'
   },
   {
-    q: '"Open the window!" the teacher said.',
-    options: [
-      'The teacher said to open the window.',
-      'The teacher told me to open the window.',
-      'The teacher suggested to open the window.',
-      'The teacher asked that open the window.'
+    stem: '"<strong>Don\'t use</strong> your phone in class," said the teacher.',
+    opts: [
+      'The teacher said us not to use our phones in class.',
+      'The teacher told us not to use our phones in class.',
+      'The teacher suggested us not to use our phones in class.',
+      'The teacher warned us not using our phones in class.',
     ],
-    correct: 1,
-    explanation: 'Commands use tell/ask + object + to-infinitive. "Told me to open" is the correct structure.'
+    ans: 1,
+    exp: '"tell + sb + not to-inf" for negative commands. "said us" is wrong — say takes no object. "suggested" and "warned" require different patterns.'
   },
   {
-    q: '"I <em>have finished</em> my homework," Tom said.',
-    options: [
-      'Tom said he finished his homework.',
-      'Tom said he has finished his homework.',
-      'Tom said he had finished his homework.',
-      'Tom said he will finish his homework.'
+    stem: '"<strong>Where did you go</strong> last night?" she asked him.',
+    opts: [
+      'She asked him where did he go last night.',
+      'She asked him where he had gone the night before.',
+      'She asked him where he went the night before.',
+      'She asked him where he had gone last night.',
     ],
-    correct: 2,
-    explanation: 'Present perfect "have finished" → past perfect "had finished" (backshift).'
+    ans: 1,
+    exp: 'Indirect question: normal S–V order, no "did". Past simple → past perfect. "last night" → "the night before".'
   },
   {
-    q: '"We <em>will</em> help you," they said.',
-    options: [
-      'They said they will help me.',
-      'They said they would help me.',
-      'They said they could help me.',
-      'They said they shall help me.'
+    stem: '"<strong>You should see</strong> a doctor," my friend told me.',
+    opts: [
+      'My friend advised me to see a doctor.',
+      'My friend suggested me to see a doctor.',
+      'My friend told me seeing a doctor.',
+      'My friend said me to see a doctor.',
     ],
-    correct: 1,
-    explanation: '"will" → "would" in reported speech (backshift of future).'
-  }
+    ans: 0,
+    exp: '"Advise" is the ideal verb for recommendations, followed by to-infinitive. "Suggest" cannot use a to-infinitive.'
+  },
 ];
 
-const transformData = [
+// ══════════════════════════════════════════════
+// WRITING DATA
+// ══════════════════════════════════════════════
+const writeData = [
   {
-    direct: '"She works in a hospital," Marco said.',
-    hint: 'Marco said that she ___.',
-    accepted: ['marco said that she worked in a hospital', 'marco said she worked in a hospital'],
-    model: 'Marco said that she worked in a hospital.'
+    speaker: 'Kaya to Drew',
+    direct:  '"I practise every day."',
+    prompt:  'Kaya told Drew that she…',
+    accept:  ['practised every day', 'practised every day.'],
+    model:   'Kaya told Drew that she practised every day.',
   },
   {
-    direct: '"Can you help me?" Anna asked.',
-    hint: 'Anna asked if I ___.',
-    accepted: ['anna asked if i could help her', 'anna asked whether i could help her'],
-    model: 'Anna asked if I could help her.'
+    speaker: 'Coach',
+    direct:  '"You are going to win."',
+    prompt:  'The coach said that she…',
+    accept:  ['was going to win', 'was going to win.'],
+    model:   'The coach said that she was going to win.',
   },
   {
-    direct: '"Don\'t be late!" the coach warned.',
-    hint: 'The coach warned us ___.',
-    accepted: ['the coach warned us not to be late', 'the coach warned me not to be late'],
-    model: 'The coach warned us not to be late.'
+    speaker: 'Doctor',
+    direct:  '"Take this medicine twice a day."',
+    prompt:  'The doctor told her…',
+    accept:  ['to take the medicine twice a day', 'to take that medicine twice a day', 'to take this medicine twice a day'],
+    model:   'The doctor told her to take the medicine twice a day.',
   },
   {
-    direct: '"I have never been to Paris," she said.',
-    hint: 'She said she ___.',
-    accepted: ['she said she had never been to paris', 'she said that she had never been to paris'],
-    model: 'She said that she had never been to Paris.'
-  }
+    speaker: 'Miss Bell',
+    direct:  '"Why don\'t we talk to our parents first?"',
+    prompt:  'Miss Bell suggested…',
+    accept:  ['talking to their parents first', 'talking to our parents first', 'that they talk to their parents first', 'that we talk to our parents first', 'that they talk to our parents first', 'talking to her parents first'],
+    model:   'Miss Bell suggested talking to their parents first.',
+  },
+  {
+    speaker: 'Mara',
+    direct:  '"I have already seen that film."',
+    prompt:  'Mara said she…',
+    accept:  ['had already seen that film', 'had already seen the film', 'had already seen it'],
+    model:   'Mara said she had already seen that film.',
+  },
 ];
 
-/* ─── STATE ─────────────────────────────── */
-let currentSection = 1;
-const totalSections = 6;
-let quizScore = 0;
-let quizAnswered = new Array(quizData.length).fill(false);
-
-/* ─── INIT ──────────────────────────────── */
-function init() {
-  buildNavDots();
-  buildQuiz();
-  buildTransform();
-  goTo(1);
+// ══════════════════════════════════════════════
+// VERB BANK
+// ══════════════════════════════════════════════
+function buildVerbBank() {
+  const bank = document.getElementById('verbBank');
+  Object.keys(verbs).sort().forEach(v => {
+    const chip = document.createElement('button');
+    chip.className = 'verb-chip';
+    chip.textContent = v;
+    chip.onclick = () => selectVerb(v, chip);
+    bank.appendChild(chip);
+  });
 }
 
-function buildNavDots() {
-  const nav = document.getElementById('step-nav');
-  for (let i = 1; i <= totalSections; i++) {
-    const btn = document.createElement('button');
-    btn.className = 'dot';
-    btn.dataset.section = i;
-    btn.title = 'Go to section ' + i;
-    btn.onclick = () => goTo(i);
-    nav.appendChild(btn);
-  }
+function selectVerb(v, chip) {
+  document.querySelectorAll('.verb-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  const d = verbs[v];
+  document.getElementById('verbInfo').innerHTML =
+    `<span class="pattern">${d.pattern}</span><em>${d.ex}</em>`;
 }
 
+// ══════════════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════════════
 function buildQuiz() {
-  const container = document.getElementById('quiz-container');
-  quizData.forEach((item, idx) => {
+  const c = document.getElementById('quizContainer');
+  c.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  quizData.forEach((q, qi) => {
     const div = document.createElement('div');
     div.className = 'quiz-question';
+    div.id = 'qq-' + qi;
     div.innerHTML = `
-      <p class="q-text">${idx + 1}. ${item.q}</p>
-      <div class="options" id="opts-${idx}">
-        ${item.options.map((opt, oi) =>
-          `<button class="option-btn" onclick="selectOption(${idx},${oi})">${opt}</button>`
-        ).join('')}
+      <div class="q-number">Question ${qi + 1} of ${quizData.length}</div>
+      <div class="quiz-stem">${q.stem}</div>
+      <div class="quiz-options" id="qopts-${qi}">
+        ${q.opts.map((o, oi) => `
+          <button class="quiz-opt" id="qo-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})">
+            <span class="opt-key">${letters[oi]}</span>${o}
+          </button>`).join('')}
       </div>
-      <div class="feedback" id="fb-${idx}"></div>
+      <div class="feedback-note" id="qfb-${qi}"></div>
     `;
-    container.appendChild(div);
+    c.appendChild(div);
   });
 }
 
-function buildTransform() {
-  const container = document.getElementById('transform-container');
-  transformData.forEach((item, idx) => {
+function answerQuiz(qi, oi) {
+  if (quizAnswers[qi] !== undefined) return;
+  const q = quizData[qi];
+  const isRight = oi === q.ans;
+  quizAnswers[qi] = isRight;
+
+  for (let i = 0; i < q.opts.length; i++) {
+    const btn = document.getElementById(`qo-${qi}-${i}`);
+    if (btn) {
+      btn.disabled = true;
+      if (i === q.ans) btn.classList.add('correct');
+      else if (i === oi && !isRight) btn.classList.add('wrong');
+    }
+  }
+  const fb = document.getElementById('qfb-' + qi);
+  fb.textContent = (isRight ? '✓ ' : '✗ ') + q.exp;
+  fb.className = 'feedback-note show ' + (isRight ? 'ok' : 'no');
+  document.getElementById('qq-' + qi).classList.add('answered');
+
+  const score = Object.values(quizAnswers).filter(Boolean).length;
+  document.getElementById('quizScore').textContent = score;
+}
+
+// ══════════════════════════════════════════════
+// WRITING
+// ══════════════════════════════════════════════
+function buildWrite() {
+  const c = document.getElementById('writeContainer');
+  c.innerHTML = '';
+  writeData.forEach((item, wi) => {
     const div = document.createElement('div');
-    div.className = 'transform-ex';
+    div.className = 'practice-item';
     div.innerHTML = `
-      <p class="direct-quote">${item.direct}</p>
-      <p style="font-size:0.85rem; color:#888; margin-bottom:8px;">Hint: <em>${item.hint}</em></p>
-      <input class="transform-input" id="tf-${idx}" type="text" placeholder="Type your reported speech here…" />
-      <br>
-      <button class="check-btn" onclick="checkTransform(${idx})">Check ✓</button>
-      <div class="feedback" id="tfb-${idx}"></div>
+      <div class="direct-quote"><span class="speaker">${item.speaker}</span>${item.direct}</div>
+      <div class="answer-row">
+        <input type="text" class="answer-input" id="wi-${wi}"
+               placeholder="${item.prompt}"
+               onkeydown="if(event.key==='Enter')checkWrite(${wi})">
+        <button class="check-btn" id="wb-${wi}" onclick="checkWrite(${wi})">Check</button>
+      </div>
+      <div class="feedback-note" id="wfb-${wi}"></div>
+      <div class="model-answer" id="wm-${wi}"><span class="label">Model:</span>${item.model}</div>
     `;
-    container.appendChild(div);
+    c.appendChild(div);
   });
 }
 
-/* ─── NAVIGATION ─────────────────────────── */
-function goTo(n) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('s' + n).classList.add('active');
-  currentSection = n;
-  updateDots();
-  updateProgressBar();
-  if (n === 6) updateScore();
+async function checkWrite(wi) {
+  if (writeGraded[wi]) return;
+  const input  = document.getElementById('wi-' + wi);
+  const btn    = document.getElementById('wb-' + wi);
+  const fb     = document.getElementById('wfb-' + wi);
+  const model  = document.getElementById('wm-' + wi);
+  const val    = input.value.trim();
+  if (!val) return;
+
+  writeGraded[wi] = true;
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  const item = writeData[wi];
+  const prompt = `You are a strict but fair English grammar teacher evaluating a reported speech exercise.
+
+Direct speech: ${item.direct} (said by: ${item.speaker})
+The student was asked to complete: "${item.prompt} ___"
+Student's answer (the clause they added): "${val}"
+Model answer: "${item.model}"
+
+Evaluate ONLY whether the student's answer is grammatically correct reported speech.
+Focus on: correct backshift of tenses, correct reporting verb pattern, correct word order for indirect questions.
+Minor wording variations are fine if the grammar is correct.
+
+Respond ONLY with valid JSON, no markdown:
+{"correct": true/false, "feedback": "one short specific sentence of feedback (max 15 words)"}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 200,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.map(c => c.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
+
+    input.classList.add(result.correct ? 'correct' : 'wrong');
+    fb.textContent = result.feedback;
+    fb.className = 'feedback-note show ' + (result.correct ? 'ok' : 'no');
+    model.classList.add('show');
+    btn.textContent = result.correct ? '✓' : '✗';
+    writeResults[wi] = result.correct;
+  } catch (err) {
+    // Fallback: string match
+    const accepted = item.accept.map(a => a.toLowerCase().replace(/[.!?]+$/, ''));
+    const isRight  = accepted.includes(val.toLowerCase().replace(/[.!?]+$/, ''));
+    input.classList.add(isRight ? 'correct' : 'wrong');
+    fb.textContent = isRight ? 'Correct.' : 'Check the model answer below.';
+    fb.className = 'feedback-note show ' + (isRight ? 'ok' : 'no');
+    model.classList.add('show');
+    btn.textContent = isRight ? '✓' : '✗';
+    writeResults[wi] = isRight;
+  }
+
+  const wScore = Object.values(writeResults).filter(Boolean).length;
+  document.getElementById('writeScore').textContent = wScore;
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+let maxVisited = 0; // track furthest screen reached
+
+function go(n) {
+  const prev = document.getElementById('s' + current);
+  prev.classList.remove('active');
+  // Force animation re-trigger by briefly removing and re-adding active
+  prev.style.animation = 'none';
+
+  current = n;
+  if (n > maxVisited) maxVisited = n;
+
+  const next = document.getElementById('s' + current);
+  // Reset animation so it fires fresh every time
+  next.style.animation = 'none';
+  next.classList.add('active');
+  // Trigger reflow, then restore animation
+  void next.offsetWidth;
+  next.style.animation = '';
+
+  updatePips();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (n === 6) buildResults();
 }
 
-function updateDots() {
-  document.querySelectorAll('.dot').forEach(dot => {
-    const sec = parseInt(dot.dataset.section);
-    dot.className = 'dot';
-    if (sec === currentSection) dot.classList.add('active');
-    else if (sec < currentSection) dot.classList.add('done');
-  });
-}
-
-function updateProgressBar() {
-  const pct = ((currentSection - 1) / (totalSections - 1)) * 100;
-  document.getElementById('progress-bar').style.width = pct + '%';
-}
-
-/* ─── QUIZ LOGIC ──────────────────────────── */
-function selectOption(qIdx, optIdx) {
-  if (quizAnswered[qIdx]) return;
-  quizAnswered[qIdx] = true;
-
-  const opts = document.querySelectorAll(`#opts-${qIdx} .option-btn`);
-  opts.forEach(btn => btn.disabled = true);
-
-  const isCorrect = optIdx === quizData[qIdx].correct;
-  opts[optIdx].classList.add(isCorrect ? 'correct' : 'wrong');
-  if (!isCorrect) opts[quizData[qIdx].correct].classList.add('correct');
-
-  if (isCorrect) quizScore++;
-
-  const fb = document.getElementById('fb-' + qIdx);
-  fb.className = 'feedback show ' + (isCorrect ? 'ok' : 'err');
-  fb.textContent = (isCorrect ? '✓ Correct! ' : '✗ Not quite. ') + quizData[qIdx].explanation;
-}
-
-/* ─── TRANSFORM LOGIC ─────────────────────── */
-function checkTransform(idx) {
-  const input = document.getElementById('tf-' + idx);
-  const val = input.value.trim().toLowerCase().replace(/[.,!?]+$/, '').replace(/\s+/g,' ');
-  const fb = document.getElementById('tfb-' + idx);
-  const accepted = transformData[idx].accepted;
-
-  const ok = accepted.some(a => val === a || val === a.replace(/[.,!?]+$/,''));
-
-  fb.className = 'feedback show ' + (ok ? 'ok' : 'err');
-  if (ok) {
-    fb.textContent = '✓ Great job!';
-    input.disabled = true;
-    document.querySelector(`#tfb-${idx}`).previousElementSibling.disabled = true;
-  } else {
-    fb.innerHTML = `✗ Not quite. A possible answer: <strong>${transformData[idx].model}</strong>`;
+function updatePips() {
+  for (let i = 0; i < TOTAL_SCREENS; i++) {
+    const pip = document.getElementById('pip-' + i);
+    if (!pip) continue;
+    pip.className = 'pip';
+    if (i === current) pip.classList.add('active');
+    else if (i < current) pip.classList.add('done');
+    pip.style.cursor = i <= maxVisited ? 'pointer' : 'default';
+    pip.title = i <= maxVisited ? 'Go to screen ' + i : 'Complete lesson to unlock';
   }
 }
 
-/* ─── SCORE ──────────────────────────────── */
-function updateScore() {
-  document.getElementById('final-score').textContent = quizScore;
-  let msg = '', detail = '';
-  if (quizScore === 5) {
-    msg = 'Perfect score! Outstanding! 🌟';
-    detail = 'You have a strong command of reported speech. Keep practising with real texts!';
-  } else if (quizScore >= 3) {
-    msg = 'Well done! You\'re getting it.';
-    detail = 'Review any questions you missed, especially the backshift rules.';
-  } else {
-    msg = 'Keep practising — you\'ll get there!';
-    detail = 'Go back through the Backshift section and try the quiz again. It takes time!';
-  }
-  document.getElementById('score-msg').textContent = msg;
-  document.getElementById('score-detail').textContent = detail;
+function buildResults() {
+  const qScore = Object.values(quizAnswers).filter(Boolean).length;
+  const wScore = Object.values(writeResults).filter(Boolean).length;
+  const total  = qScore + wScore;
+
+  document.getElementById('finalScore').textContent = total;
+  document.getElementById('bdQuiz').textContent     = qScore;
+  document.getElementById('bdWrite').textContent    = wScore;
+
+  const msgs = [
+    'Keep going — review the rules and try again.',
+    'A start. The rules will click with more practice.',
+    'Solid effort. Focus on backshift and word order.',
+    'Good work. A few edges to sharpen.',
+    'Very good. Almost there — review indirect questions.',
+    'Nearly perfect. One or two fine points to revisit.',
+    'Excellent. Strong command of reported speech.',
+    'Very strong. Just a small detail to watch.',
+    'Outstanding. You've mastered reported speech.',
+    'Outstanding. You've mastered reported speech.',
+    'Clean sweep. Reported speech is yours.'
+  ];
+  document.getElementById('finalMsg').textContent = msgs[Math.min(total, msgs.length - 1)];
 }
 
-/* ─── RESTART ─────────────────────────────── */
-function restartLesson() {
-  quizScore = 0;
-  quizAnswered = new Array(quizData.length).fill(false);
-  document.getElementById('quiz-container').innerHTML = '';
-  document.getElementById('transform-container').innerHTML = '';
+function restart() {
+  Object.keys(quizAnswers).forEach(k => delete quizAnswers[k]);
+  Object.keys(writeResults).forEach(k => delete writeResults[k]);
+  Object.keys(writeGraded).forEach(k => delete writeGraded[k]);
+  maxVisited = 0;
   buildQuiz();
-  buildTransform();
-  goTo(1);
+  buildWrite();
+  document.getElementById('quizScore').textContent  = '0';
+  document.getElementById('writeScore').textContent = '0';
+  go(0);
 }
 
-init();
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+(function init() {
+  const track = document.getElementById('pipTrack');
+  for (let i = 0; i < TOTAL_SCREENS; i++) {
+    const pip = document.createElement('div');
+    pip.className = 'pip' + (i === 0 ? ' active' : '');
+    pip.id = 'pip-' + i;
+    pip.title = 'Screen ' + i;
+    pip.style.cursor = i === 0 ? 'pointer' : 'default';
+    pip.addEventListener('click', () => {
+      if (i <= maxVisited) go(i);
+    });
+    track.appendChild(pip);
+  }
+  buildVerbBank();
+  buildQuiz();
+  buildWrite();
+})();
 </script>
 </body>
 </html>
